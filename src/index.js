@@ -2,7 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+// function components: easy way to write components that only have
+// a render method and dont have their own state
 function Square(props) {
+    // square renders a button. Calls Board's handleClick since that was passed as prop.
+    //handleClick(i) has already set what the parameter will be when calling function
     return (
       <button className="square" onClick={props.onClick}>
         {props.value}
@@ -10,9 +14,12 @@ function Square(props) {
     );
   }
 
+  // parent component to square, controls squares state
   class Board extends React.Component {
 
+    // constructor to initialize the state of Board
     constructor(props) {
+        // always have to call super using React constructors 
         super(props);
         this.state = {
             squares: Array(9).fill(null),
@@ -20,13 +27,19 @@ function Square(props) {
         }; 
     }
 
+    // when a square is clicked this function is fired.
     handleClick(i) {
+        // create a copy of squares
+        // Immutability is important
+        // we can easily see when a component needs to be rerendered 
         const squares = this.state.squares.slice();
 
+        // if there is a winner or button clicked was filled
         if (calculateWinner(squares) || squares[i]) {
             return;
         }
 
+        // changes Board's state to this new squares array
         squares[i] = this.state.xIsNext ? 'X' : '0';
         this.setState({
             squares: squares,
@@ -36,6 +49,8 @@ function Square(props) {
 
     renderSquare(i) {
       return (
+          // uses function Square to return a square
+          // passes props value and onClick where onClick is a function (event handling)
         <Square 
             value={this.state.squares[i]}
             onClick={() => this.handleClick(i)}
@@ -43,8 +58,9 @@ function Square(props) {
        );
     }
   
+    // This Board renders 9 squares. 
     render() {
-      
+      // X, O, or null 
       const winner = calculateWinner(this.state.squares);
       let status;
       if (winner) {
@@ -53,6 +69,7 @@ function Square(props) {
           status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
       }
   
+      // renders Squares 
       return (
         <div>
           <div className="status">{status}</div>
@@ -77,6 +94,7 @@ function Square(props) {
   }
   
   class Game extends React.Component {
+    // this Game renders a Board. 
     render() {
       return (
         <div className="game">
@@ -114,6 +132,7 @@ function Square(props) {
   
   // ========================================
   
+  // renders a game 
   ReactDOM.render(
     <Game />,
     document.getElementById('root')
